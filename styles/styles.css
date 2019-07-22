@@ -1,0 +1,12 @@
+#webheader {
+  font-family: Verdana;
+  background: #EDCF8F;
+  color: #C97F4E;
+  text-align: center;
+  padding: 20px;
+  margin: 0 auto;
+}
+#webheader img {
+  height: 80px;
+  float: left;
+}
