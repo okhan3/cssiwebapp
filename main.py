@@ -5,6 +5,7 @@ import jinja2
 import os
 import json
 from google.appengine.api import urlfetch
+from song import Song
 
 the_jinja_env = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
@@ -49,8 +50,14 @@ class InputPage(webapp2.RequestHandler):
             song['artist'] = result['artist']['name']
             song['track'] = result['track']['name']
             song['lyrics'] = splitLines(result['track']['text'])
+
+            details = Song(artist=result['artist']['name'], track=result['track']['name'], lyrics=(splitLines(result['track']['text'])))
+            details.put()
+
         input_template = the_jinja_env.get_template('/templates/inputlyrics.html')
         self.response.write(input_template.render(song))
+
+
 
 app = webapp2.WSGIApplication([
     ('/', HomePage),
