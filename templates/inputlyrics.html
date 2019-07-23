@@ -9,30 +9,41 @@
   <body>
 
     <div id="webheader">
-      <img src="/images/giraffe.png">
+      <a href="/"><img src="/images/giraffe.png"></a>
       <h1>Lyric Giraffe</h1>
       <em><h2>For your lyric finding needs!</h2></em>
     </div>
 
     <div class="outer-container">
       <div class="inner-container">
-        <h1>Input artist/song</h1>
-        <form method="post">
-          Enter song name:
-          <input type="text" name="song_name" value="">
-          Enter artist name:
-          <input type="text" name="artist_name" value="">
-          <input type="submit" value="Go!">
+
+        <h1>Search by Artist and Song</h1>
+        <form method="post" id="inputform">
+          <span>Artist name:</span>
+          <input type="text" name="artist_name" required>
+          <span>Song name:</span>
+          <input type="text" name="song_name" required>
+          <button type="submit">Search</button>
         </form>
+
         <div id="inputLyricsBox">
-          <p> {{artist}} </p>
-          <p> {{track}} </p>
+          <div class="songdetails">
+            {% if track|string() != "" %}
+              <h1> "{{track}}" </h1>
+            {% endif %}
+            <h1> {{artist}} </h1>
+          </div>
           {% for line in lyrics %}
-          <p>
-            {{line}}
-          </p>
+            {% if line == '' %}
+              <br>
+            {% else %}
+              <p>
+                {{line}}
+              </p>
+            {% endif %}
           {% endfor %}
         </div>
+
       </div>
     </div>
 

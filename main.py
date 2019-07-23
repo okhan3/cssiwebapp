@@ -32,7 +32,7 @@ class HomePage(webapp2.RequestHandler):
 class InputPage(webapp2.RequestHandler):
     def get(self):
         input_template = the_jinja_env.get_template('/templates/inputlyrics.html')
-        self.response.write(input_template.render())
+        self.response.write(input_template.render({"artist": ""}))
     def post(self):
         api_url = "https://orion.apiseeds.com/api/music/lyric/"
         api_url += self.request.get("artist_name") + "/"
@@ -41,7 +41,7 @@ class InputPage(webapp2.RequestHandler):
         apiseeds_response = urlfetch.fetch(api_url)
         status = apiseeds_response.status_code
         song = {
-            "status" : status
+            "status" : status,
         }
         if int(status) == 200:
             apiseeds_responseJson = json.loads(apiseeds_response.content)

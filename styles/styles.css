@@ -52,6 +52,7 @@ body {
   margin-top: 20px;
   text-align: left;
   text-shadow: 2px 2px #F0ECE1;
+  margin-bottom: 20px;
 }
 .inner-container {
   padding: 30px;
@@ -84,4 +85,57 @@ body {
 }
 #selection img {
   height: 75px;
+}
+
+/* styling for song details (artist and song name) */
+.songdetails h1:first-of-type {
+  margin-top: 25px;
+  margin-bottom: 10px;
+  text-align: center;
+  font-size: 25px;
+}
+.songdetails h1:last-of-type {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+  font-size: 20px;
+  color: #C97F4E;
+  margin-bottom: 20px;
+}
+/* input form submission styles */
+#inputdetails {
+  border: 2px solid black;
+}
+#inputform {
+  text-align: center;
+  margin: 0 auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border: 2px solid #EDCF8F;
+  max-width: 625px;
+  padding: 20px;
+  background: #977359;
+  opacity: 0.95;
+}
+#inputform span {
+  color: white;
+  text-shadow: 2px 2px black;
+}
+#inputform input {
+  margin-right: 30px;
+}
+#inputform button {
+  background: #C97F4E;
+  color: white;
+  text-shadow: 2px solid black;
+  font-size: 15px;
+  border: 1px solid #C97F4E;
+}
+#inputform img {
+  height: 50px;
+}
+
+#inputLyricsBox p {
+  padding: 5px;
+  padding-left: 10px;
 }
