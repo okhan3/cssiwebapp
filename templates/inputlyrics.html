@@ -16,9 +16,20 @@
 
     <div class="outer-container">
       <div class="inner-container">
-        <h1>Welcome to Lyric Giraffe!</h1>
-        <h2>About Us</h2>
-        <p>Insert relevant text</p>
+        <h1>Input artist/song</h1>
+        <form method="post" >
+          Enter song name:
+          <input type="text" name="song_name" value="">
+          Enter artist name:
+          <input type="text" name="artist_name" value="">
+          <input type="submit" value="Go!">
+        </form>
+        <div id="inputLyricsBox">
+          <p> {{artist}} </p>
+          <p> {{song}} </p>
+          <p> {{lyrics}} </p>
+
+        </div>
       </div>
     </div>
 

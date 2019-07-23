@@ -16,9 +16,14 @@ class HomePage(webapp2.RequestHandler):
         home_template = the_jinja_env.get_template('/templates/home.html')
         self.response.write(home_template.render())
 
+class InputPage(webapp2.RequestHandler):
+    def get(self): #for a get request
+        input_template = the_jinja_env.get_template('/templates/inputlyrics.html')
+        self.response.write(input_template.render())
+
 app = webapp2.WSGIApplication([
-    ('/', HomePage)#,
-    # ('/inputtolyrics', InputPage),
+    ('/', HomePage),
+    ('/inputlyrics', InputPage)
     # ('/spotifytolyrics', SpotifyPage),
     # ('/popularsearch', PopularPage)
 ], debug=True)
