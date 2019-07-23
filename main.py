@@ -3,7 +3,6 @@
 import webapp2
 import jinja2
 import os
-from models import Meme
 from google.appengine.api import urlfetch
 import json
 import random
