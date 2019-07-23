@@ -27,7 +27,11 @@
         <div id="inputLyricsBox">
           <p> {{artist}} </p>
           <p> {{track}} </p>
-          <p> {{lyrics}} </p>
+          {% for line in lyrics %}
+          <p>
+            {{line}}
+          </p>
+          {% endfor %}
         </div>
       </div>
     </div>

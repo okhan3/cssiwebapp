@@ -13,6 +13,17 @@ the_jinja_env = jinja2.Environment(
 
 API_KEY = "VHl5WJoexxSgghXe4zUdqAjrfSfOdbZjCGb6BkrODi5qquF3MFPGzNrFQr1Zsj4W"
 
+def splitLines(text):
+    lines = []
+    while True:
+        breakIndex = text.find("\n")
+        if breakIndex == -1:
+            break
+        lines.append(text[0:breakIndex])
+        text = text[breakIndex + 1: len(text)]
+    lines.append(text)
+    return lines
+
 class HomePage(webapp2.RequestHandler):
     def get(self): #for a get request
         home_template = the_jinja_env.get_template('/templates/home.html')
@@ -37,7 +48,7 @@ class InputPage(webapp2.RequestHandler):
             result = apiseeds_responseJson['result']
             song['artist'] = result['artist']['name']
             song['track'] = result['track']['name']
-            song['lyrics'] = result['track']['text']
+            song['lyrics'] = splitLines(result['track']['text'])
         input_template = the_jinja_env.get_template('/templates/inputlyrics.html')
         self.response.write(input_template.render(song))
 
