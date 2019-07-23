@@ -16,9 +16,22 @@ class HomePage(webapp2.RequestHandler):
         home_template = the_jinja_env.get_template('/templates/home.html')
         self.response.write(home_template.render())
 
+class InputPage(webapp2.RequestHandler):
+    def get(self):
+        input_template = the_jinja_env.get_template('/templates/inputlyrics.html')
+        self.response.write(input_template.render())
+    def post(self):
+        api_url = "https://orion.apiseeds.com/api/music/"
+        api_url += self.request.get("artist_name") + "/"
+        api_url += self.request.get("song_name")
+        api_url += "?apikey=VHl5WJoexxSgghXe4zUdqAjrfSfOdbZjCGb6BkrODi5qquF3MFPGzNrFQr1Zsj4W"
+        apiseeds_response = urlfetch.fetch(api_url)
+        print(apiseeds_response)
+
+
 app = webapp2.WSGIApplication([
-    ('/', HomePage)#,
-    # ('/inputtolyrics', InputPage),
-    # ('/spotifytolyrics', SpotifyPage),
+    ('/', HomePage),
+    ('/inputlyrics', InputPage)
+    # ('/spotifylyrics', SpotifyPage),
     # ('/popularsearch', PopularPage)
 ], debug=True)
