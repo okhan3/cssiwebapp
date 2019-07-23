@@ -16,7 +16,7 @@ the_jinja_env = jinja2.Environment(
 class HomePage(webapp2.RequestHandler):
     def get(self): #for a get request
         home_template = the_jinja_env.get_template('templates/home.html')
-        self.response.write(result_template.render())
+        self.response.write(home_template.render())
 
 app = webapp2.WSGIApplication([
     ('/', HomePage), #this maps the root url to the Main Page Handler
