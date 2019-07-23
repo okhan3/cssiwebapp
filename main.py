@@ -35,15 +35,25 @@ class InputPage(webapp2.RequestHandler):
         input_template = the_jinja_env.get_template('/templates/inputlyrics.html')
         self.response.write(input_template.render())
     def post(self):
+        song = {}
+        lyricDict = {
+            "allDetails" : Song.query().fetch()
+        }
+        if self.request.get("artist_name") in lyricDict[allDetails] and self.request.get("song_name") in lyricDict[allDetails]:
+            song['artist'] = self.request.get("artist_name")
+            song['track'] = self.request.get("song_name")
+            for i in range(0,len(allDetails)):
+                if allDetails[i]['track'] == song['track']:
+                    song['lyrics'] = allDetails[i]['lyrics']
         api_url = "https://orion.apiseeds.com/api/music/lyric/"
         api_url += self.request.get("artist_name") + "/"
         api_url += self.request.get("song_name")
         api_url += "?apikey=" + API_KEY
         apiseeds_response = urlfetch.fetch(api_url)
         status = apiseeds_response.status_code
-        song = {
-            "status" : status
-        }
+        song["status"] = status
+
+
         if int(status) == 200:
             apiseeds_responseJson = json.loads(apiseeds_response.content)
             result = apiseeds_responseJson['result']
@@ -56,6 +66,8 @@ class InputPage(webapp2.RequestHandler):
 
         input_template = the_jinja_env.get_template('/templates/inputlyrics.html')
         self.response.write(input_template.render(song))
+
+
 
 
 
