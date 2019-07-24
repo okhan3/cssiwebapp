@@ -88,14 +88,21 @@ class InputPage(webapp2.RequestHandler):
                 if(findSong(song['artist'], song['track'], songArr) == None):
                     songModel = Song(artist=song['artist'], track=song['track'], lyrics=song['lyrics'])
                     songModel.put()
+            else:
+                song['error'] = "We could not find that song, try again"
         #If the song isn't found AND the API fetch is unsuccessful, nothing is printed
         input_template = jinja_env.get_template('/templates/inputlyrics.html')
         self.response.write(input_template.render(song))
 
+class SpotifyPage(webapp2.RequestHandler):
+    def get(self):
+        home_template = jinja_env.get_template('/templates/spotifylyrics.html')
+        self.response.write(home_template.render())
+
 #List routes
 app = webapp2.WSGIApplication([
     ('/', HomePage),
-    ('/inputlyrics', InputPage)
-    # ('/spotifylyrics', SpotifyPage),
+    ('/inputlyrics', InputPage),
+    ('/spotifylyrics', SpotifyPage)
     # ('/popularsearch', PopularPage)
 ], debug=True)

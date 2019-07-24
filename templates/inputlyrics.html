@@ -30,8 +30,11 @@
           <div class="songdetails">
             {% if track|string() != "" %}
               <h1> "{{track}}" </h1>
+              {% else %}
+            <h1> {{error}} </h1>
             {% endif %}
-            <h1> {{artist}} </h1>
+        <h1> {{artist}} </h1>
+
           </div>
           {% for line in lyrics %}
             {% if line == '' %}
