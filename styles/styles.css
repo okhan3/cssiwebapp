@@ -178,21 +178,22 @@ body {
 .split {
   height: 100%;
   width: 50%;
-  position: fixed;
+  position: relative;
   z-index: 1;
-  top: 0;
   overflow-x: hidden;
-  padding-top: 20px;
+  float: left;
 }
 
 
 .spotify {
-  left: 0;
+  width: 500px;
+  height: 610px;
   background-color: #111;
 }
 .lyrics {
-  right: 0;
-  background-color: red;
+  width: 500px;
+  height: 610px;
+  background-color: #EDCF8F;
 }
 
 /* If you want the content centered horizontally and vertically */
