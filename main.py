@@ -1,5 +1,10 @@
 #main.py
 
+#TODO: possibly change findSong() function using query().filter()?
+#TODO: update styling for the home page and add relevant text
+#TODO: SPOTIFY STUFF?!?!?!?
+#TODO: display error message when search for lyrics fails?
+
 #Imports Section
 import webapp2
 import jinja2
