@@ -1,12 +1,30 @@
 #main.py
 
+#TODO: possibly change findSong() function using query().filter()?
+#TODO: update styling for the home page and add relevant text
+#TODO: SPOTIFY STUFF?!?!?!?
+#TODO: display error message when search for lyrics fails?
+#TODO: use https://urllib3.readthedocs.io/en/latest/reference/urllib3.contrib.html instead of URLFETCH?????
+#Thanks to https://medium.com/@masaok/gae-spotifyoautherror-none-6bac60ee3837 ... whoever you are
+
 #Imports Section
 import webapp2
 import jinja2
 import os
 import json
+import spotipy
+import requests_toolbelt.adapters.appengine
+from spotipy.oauth2 import SpotifyClientCredentials
 from google.appengine.api import urlfetch
 from models import Song
+
+#Just fixes whatever the issue was... leave it in -_-
+requests_toolbelt.adapters.appengine.monkeypatch()
+
+#Allows for authorized requests to Spotify's platform (using Joey's client_id at the moment)
+client_credentials_manager = SpotifyClientCredentials(client_id='a3af3476e5f24441ba77767bdd13f518',
+                                                      client_secret='08aee8a23fd148f3a790fe4116edecb1')
+spotify = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
 #Initialize the jinja2 environment
 jinja_env = jinja2.Environment(
@@ -49,6 +67,18 @@ def findSong(artist, song, songArr):
 
 class HomePage(webapp2.RequestHandler):
     def get(self):
+        #EXAMPLE IT WORKS - DELETE LATER #####
+        birdy_uri = 'spotify:artist:36QJpDe2go2KgaRleHCDTp'
+
+        results = spotify.artist_albums(birdy_uri, album_type='album')
+        albums = results['items']
+        while results['next']:
+            results = spotify.next(results)
+            albums.extend(results['items'])
+
+        for album in albums:
+            print(album['name'])
+        #EXAMPLE IT WORKS - DELETE LATER #####
         home_template = jinja_env.get_template('/templates/home.html')
         self.response.write(home_template.render())
 
