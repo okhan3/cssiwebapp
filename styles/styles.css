@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css?family=Sanchez');
+
+
 /* reset styles */
 html, body, h1, h2, h3, p, img, div {
   margin: 0;
@@ -6,7 +9,7 @@ html, body, h1, h2, h3, p, img, div {
 
 /* style entire document */
 body {
-  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-family: "Sanchez", Verdana, Arial, Helvetica, sans-serif;
   font-size: 15px;
   background: url("/images/backgroundpattern.jpg"), #6F4A38;
   background-repeat: repeat;
@@ -74,17 +77,47 @@ body {
 .inner-container h2:last-of-type {
   text-align: center;
 }
+.outer-spotify {
+  position: relative;
+  width: 1000px;
+  height: 700px;
+  border: 2px solid #6F4A38;
+  opacity: 0.9;
+  margin: 0 auto;
+  background: #EDCF8F;
+  margin-top: 20px;
+  text-align: left;
+  text-shadow: 2px 2px #F0ECE1;
+  margin-bottom: 20px;
+}
 
 /* style selection methods */
 #selection {
   margin: 0 auto;
   text-align: center;
-  display: block;
-}
-#selection p {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
 }
 #selection img {
-  height: 75px;
+  height: 100px;
+  border-radius: 50px;
+  background: black;
+  border: 2px solid black;
+}
+#selection button {
+  background: #C97F4E;
+  color: black;
+  text-shadow: 2px solid black;
+  font-size: 24px;
+  text-align: center;
+  border-radius: 25px;
+  border: 2px solid black;
+  height: 100px;
+  margin-right: 75px;
+}
+#selection span {
+    font-family: "Sanchez"
 }
 
 /* styling for song details (artist and song name) */
@@ -138,4 +171,41 @@ body {
 #inputLyricsBox p {
   padding: 5px;
   padding-left: 10px;
+}
+
+
+/* Split the screen in half */
+.split {
+  height: 100%;
+  width: 50%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+
+.spotify {
+  left: 0;
+  background-color: #111;
+}
+.lyrics {
+  right: 0;
+  background-color: red;
+}
+
+/* If you want the content centered horizontally and vertically */
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+/* Style the image inside the centered container, if needed */
+.centered img {
+  width: 150px;
+  border-radius: 50%;
 }
