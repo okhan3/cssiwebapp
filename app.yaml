@@ -13,3 +13,7 @@ handlers:
 libraries:
 - name: jinja2
   version: latest
+
+#Makes sure to validate certificates at the expense of speed
+# env_variables:
+#   PYTHONHTTPSVERIFY: 1
