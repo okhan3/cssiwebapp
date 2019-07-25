@@ -27,11 +27,21 @@
               <span id="search">Search</span>
             </button>
           </form>
-          <h3>Playlists:</h3>
-          {% for name in names %}
-            <h3>{{name}}<h3>
-              
-          {% endfor %}
+          {% if length %}
+            <h3>Playlists:</h3>
+            {% for i in range(length) %}
+              <h3>{{names[i]}}<h3>
+              <form>
+                {% for trackname in tracknames[i]%}
+                  <input type="radio" name="template" value="{{trackname}}"/>
+                  <h5>{{trackname[0]}}</h5>
+                  <h6>{{trackname[1]}} </h6>
+                  <br>
+                {% endfor %}
+                <input type="submit" value="go"/>
+              </form>
+            {% endfor %}
+          {% endif %}
         </div>
         <!-- <div class="centered">
           <img src="/images/spotifyimg.png">

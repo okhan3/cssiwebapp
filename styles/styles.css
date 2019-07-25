@@ -46,6 +46,9 @@ body {
 }
 
 /* main body section */
+h5 {
+  display: inline;
+}
 .outer-container {
   max-width: 1000px;
   border: 2px solid #EDCF8F;

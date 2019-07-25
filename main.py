@@ -115,13 +115,23 @@ class SpotifyPage(webapp2.RequestHandler):
         playlist_list = playlists['items']
         uri = []
         name = []
+        tracks = []
+        tracknames = []
         for playlist in playlist_list:
             uri.append(playlist['uri'])
             name.append(playlist['name'])
-
+        for id in uri:
+            tracks.append(spotify.user_playlist_tracks('joeychin01', id)['items'])
+        for tracklist in tracks:
+            trackoftrack = []
+            for track in tracklist:
+                trackoftrack.append((track['track']['name'], track['track']['artists'][0]['name']))
+            tracknames.append(trackoftrack)
         playlist = {
             'names': name,
-            'uris': uri
+            'uris': uri,
+            'tracknames': tracknames,
+            'length': int(len(name))
         }
         spotify_template = jinja_env.get_template('/templates/spotifylyrics.html')
         self.response.write(spotify_template.render(playlist))
