@@ -89,8 +89,8 @@ class InputPage(webapp2.RequestHandler):
             if int(response_status) == 200:
                 apiseeds_responseJson = json.loads(apiseeds_response.content)
                 result = apiseeds_responseJson['result']
-                song['artist'] = artist_name
-                song['track'] = song_name
+                song['artist'] = result["artist"]["name"]
+                song['track'] = result["track"]["name"]
                 song['lyrics'] = splitLines(result['track']['text'])
                 # Add the Song object to the data store if the user didn't just misspell the name of artist/song
                 if(findSong(song['artist'], song['track'], songArr) == None):
@@ -104,13 +104,34 @@ class InputPage(webapp2.RequestHandler):
 
 class SpotifyPage(webapp2.RequestHandler):
     def get(self):
-        home_template = jinja_env.get_template('/templates/spotifylyrics.html')
-        self.response.write(home_template.render())
+        spotify_template = jinja_env.get_template('/templates/spotifylyrics.html')
+        self.response.write(spotify_template.render())
+    def post(self):
+        spotify_username = str(self.request.get("spotify_username")).strip()
+        playlists = spotify.user_playlists(spotify_username)
+        playlist_list = playlists['items']
+        uri = []
+        name = []
+        for playlist in playlist_list:
+            uri.append(playlist['uri'])
+            name.append(playlist['name'])
+
+        playlist = {
+            'names' = name,
+            'uris' = uri
+        }
+        spotify_template = jinja_env.get_template('/templates/spotifylyrics.html')
+        self.response.write(spotify_template.render(playlist))
+
+class PopularPage(webapp2.RequestHandler):
+    def get(self):
+        popular_template = jinja_env.get_template('/templates/popularsearch.html')
+        self.response.write(popular_template.render())
 
 #List routes
 app = webapp2.WSGIApplication([
     ('/', HomePage),
     ('/inputlyrics', InputPage),
-    ('/spotifylyrics', SpotifyPage)
-    # ('/popularsearch', PopularPage)
+    ('/spotifylyrics', SpotifyPage),
+    ('/popularsearch', PopularPage)
 ], debug=True)
