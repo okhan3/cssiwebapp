@@ -17,6 +17,7 @@ import requests_toolbelt.adapters.appengine
 from spotipy.oauth2 import SpotifyClientCredentials
 from google.appengine.api import urlfetch
 from models import Song
+from models import User
 
 #Just fixes whatever the issue was... leave it in -_-
 requests_toolbelt.adapters.appengine.monkeypatch()
@@ -62,6 +63,17 @@ def findSong(artist, song, songArr):
                 "track" : songObj.track,
                 "lyrics" : songObj.lyrics,
                 "status" : 200
+                }
+    return None
+
+def findUser(user, userArr):
+    if(len(user) == 0):
+        return None
+    for users in userArr:
+        if artist.lower() == str(songObj.username).lower():
+            return {
+                "tracks" : userObj.tracks,
+                "playlists" : userObj.tracks
                 }
     return None
 
@@ -119,30 +131,42 @@ class SpotifyPage(webapp2.RequestHandler):
                 spotify_username = username
             else:
                 username = spotify_username
-            playlists = spotify.user_playlists(spotify_username)
-            playlist_list = playlists['items']
-            uri = []
-            name = []
-            tracks = []
-            tracknames = []
-            for playlist in playlist_list:
-                uri.append(playlist['uri'])
-                name.append(playlist['name'])
-            for id in uri:
-                tracks.append(spotify.user_playlist_tracks('joeychin01', id)['items'])
-            for tracklist in tracks:
-                trackoftrack = []
-                for track in tracklist:
-                    trackoftrack.append((track['track']['name'], track['track']['artists'][0]['name']))
-                tracknames.append(trackoftrack)
-            playlist = {
-                'names': name,
-                'uris': uri,
-                'tracknames': tracknames,
-                'length': int(len(name))
-            }
-            spotify_template = jinja_env.get_template('/templates/spotifylyrics.html')
-            self.response.write(spotify_template.render(playlist))
+            songArr = Song.query().fetch()
+            info = findUser(spotify_username, songArr)
+            if len(info['tracks']) == 0:
+                playlists = spotify.user_playlists(spotify_username)
+                playlist_list = playlists['items']
+                uri = []
+                name = []
+                tracks = []
+                tracknames = []
+                for playlist in playlist_list:
+                    uri.append(playlist['uri'])
+                    name.append(playlist['name'])
+                for id in uri:
+                    tracks.append(spotify.user_playlist_tracks('joeychin01', id)['items'])
+                for tracklist in tracks:
+                    trackoftrack = []
+                    for track in tracklist:
+                        trackoftrack.append((track['track']['name'], track['track']['artists'][0]['name']))
+                    tracknames.append(trackoftrack)
+                playlist = {
+                    'names': name,
+                    'uris': uri,
+                    'tracknames': tracknames,
+                    'length': int(len(name))
+                }
+                spotify_template = jinja_env.get_template('/templates/spotifylyrics.html')
+                self.response.write(spotify_template.render(playlist))
+            else:
+                uri = []
+                for playlist in info['playlists']:
+                    uri.append(playlist['uri'])
+                playlist = {
+                    'names' = info['playlists'],
+                    'uris' = uri,
+                    'tracknames' = 
+                }
         else:
             tup = self.request.get('track')
             song_name = tup[0]
