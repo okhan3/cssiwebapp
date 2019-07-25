@@ -21,11 +21,6 @@ from models import Song
 #Just fixes whatever the issue was... leave it in -_-
 requests_toolbelt.adapters.appengine.monkeypatch()
 
-#Allows for authorized requests to Spotify's platform (using Joey's client_id at the moment)
-client_credentials_manager = SpotifyClientCredentials(client_id='a3af3476e5f24441ba77767bdd13f518',
-                                                      client_secret='08aee8a23fd148f3a790fe4116edecb1')
-spotify = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
-
 #Initialize the jinja2 environment
 jinja_env = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
@@ -48,7 +43,7 @@ def splitLines(text):
 
 def fetchAPISeedsResponse(artist, song):
     api_url = "https://orion.apiseeds.com/api/music/lyric/"
-    api_url += artist + "/" + song
+    api_url += artist.replace(" ", "%20") + "/" + song.replace(" ", "%20")
     api_url += "?apikey=" + APISEEDS_KEY
     return urlfetch.fetch(api_url)
 
@@ -67,18 +62,6 @@ def findSong(artist, song, songArr):
 
 class HomePage(webapp2.RequestHandler):
     def get(self):
-        #EXAMPLE IT WORKS - DELETE LATER #####
-        birdy_uri = 'spotify:artist:36QJpDe2go2KgaRleHCDTp'
-
-        results = spotify.artist_albums(birdy_uri, album_type='album')
-        albums = results['items']
-        while results['next']:
-            results = spotify.next(results)
-            albums.extend(results['items'])
-
-        for album in albums:
-            print(album['name'])
-        #EXAMPLE IT WORKS - DELETE LATER #####
         home_template = jinja_env.get_template('/templates/home.html')
         self.response.write(home_template.render())
 
@@ -93,29 +76,29 @@ class InputPage(webapp2.RequestHandler):
         song_name = str(self.request.get("song_name")).strip()
         songArr = Song.query().fetch()
         song = {}
-        #Check if the song is in the datastore and initialize it if found
+        # Check if the song is in the datastore and initialize it if found
         songDict = findSong(artist_name, song_name, songArr)
         if(songDict is not None):
             song = songDict
         else:
-            #Fetch the API response and its status
+            # Fetch the API response and its status
             apiseeds_response = fetchAPISeedsResponse(artist_name, song_name)
             response_status = apiseeds_response.status_code
             song['status'] = response_status
-            #If it's successful (code 200), then decode the JSON and get the artist, track, and lyrics from it
+            # If it's successful (code 200), then decode the JSON and get the artist, track, and lyrics from it
             if int(response_status) == 200:
                 apiseeds_responseJson = json.loads(apiseeds_response.content)
                 result = apiseeds_responseJson['result']
-                song['artist'] = result['artist']['name']
-                song['track'] = result['track']['name']
+                song['artist'] = artist_name
+                song['track'] = song_name
                 song['lyrics'] = splitLines(result['track']['text'])
-                #Add the Song object to the data store if the user didn't just misspell the name of artist/song
+                # Add the Song object to the data store if the user didn't just misspell the name of artist/song
                 if(findSong(song['artist'], song['track'], songArr) == None):
                     songModel = Song(artist=song['artist'], track=song['track'], lyrics=song['lyrics'])
                     songModel.put()
             else:
                 song['error'] = "We could not find that song, try again"
-        #If the song isn't found AND the API fetch is unsuccessful, nothing is printed
+        # If the song isn't found AND the API fetch is unsuccessful, nothing is printed
         input_template = jinja_env.get_template('/templates/inputlyrics.html')
         self.response.write(input_template.render(song))
 
