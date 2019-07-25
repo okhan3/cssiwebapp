@@ -35,10 +35,19 @@ body {
   font-size: 15px;
   color: white;
 }
-#webheader img {
+#webheader a:first-of-type img {
   position: absolute;
   top: 0;
   left: 0;
+  height: 80px;
+  padding: 10px;
+  background-color: #EDCF8F;
+  border-right: 2px solid #EDCF8F;
+}
+#webheader a:last-of-type img {
+  position: absolute;
+  top: 0;
+  right: 0;
   height: 80px;
   padding: 10px;
   background-color: #EDCF8F;
