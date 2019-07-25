@@ -16,9 +16,13 @@
 
     <div class="outer-container">
       <div class="inner-container">
-        <h1>Welcome to Lyric Giraffe!</h1>
-        <h2>About Us</h2>
-        <p>Insert relevant text</p>
+        <h1>Most Popular Searches</h1>
+        {% for order in list %}
+            <h2>{{order.indexof}}<h2>
+            <h2>{{order.artist}}<h2>
+            <p>{{order.track}}<p>
+            <h1>{{order.views}}<h1>
+        {% endfor %}
       </div>
     </div>
 

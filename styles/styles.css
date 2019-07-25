@@ -55,6 +55,12 @@ body {
 }
 
 /* main body section */
+h5 {
+  display: inline;
+}
+h6 {
+  margin: 0px;
+}
 .outer-container {
   max-width: 1000px;
   border: 2px solid #EDCF8F;
