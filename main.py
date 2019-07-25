@@ -33,6 +33,8 @@ APISEEDS_KEY = "VHl5WJoexxSgghXe4zUdqAjrfSfOdbZjCGb6BkrODi5qquF3MFPGzNrFQr1Zsj4W
 client_credentials_manager = SpotifyClientCredentials(client_id='a3af3476e5f24441ba77767bdd13f518', client_secret='08aee8a23fd148f3a790fe4116edecb1')
 spotify = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
+username = ""
+
 #Splits the lyrics provided by apiseeds by line into an array
 def splitLines(text):
     lines = []
@@ -127,21 +129,41 @@ class SpotifyPage(webapp2.RequestHandler):
         spotify_template = jinja_env.get_template('/templates/spotifylyrics.html')
         self.response.write(spotify_template.render())
     def post(self):
-        spotify_username = str(self.request.get("spotify_username")).strip()
-        playlists = spotify.user_playlists(spotify_username)
-        playlist_list = playlists['items']
-        uri = []
-        name = []
-        for playlist in playlist_list:
-            uri.append(playlist['uri'])
-            name.append(playlist['name'])
-
-        playlist = {
-            'names': name,
-            'uris': uri
-        }
-        spotify_template = jinja_env.get_template('/templates/spotifylyrics.html')
-        self.response.write(spotify_template.render(playlist))
+        if self.request.get('form_name') == 'user':
+            global username
+            spotify_username = str(self.request.get("spotify_username")).strip()
+            if spotify_username == "":
+                spotify_username = username
+            else:
+                username = spotify_username
+            playlists = spotify.user_playlists(spotify_username)
+            playlist_list = playlists['items']
+            uri = []
+            name = []
+            tracks = []
+            tracknames = []
+            for playlist in playlist_list:
+                uri.append(playlist['uri'])
+                name.append(playlist['name'])
+            for id in uri:
+                tracks.append(spotify.user_playlist_tracks('joeychin01', id)['items'])
+            for tracklist in tracks:
+                trackoftrack = []
+                for track in tracklist:
+                    trackoftrack.append((track['track']['name'], track['track']['artists'][0]['name']))
+                tracknames.append(trackoftrack)
+            playlist = {
+                'names': name,
+                'uris': uri,
+                'tracknames': tracknames,
+                'length': int(len(name))
+            }
+            spotify_template = jinja_env.get_template('/templates/spotifylyrics.html')
+            self.response.write(spotify_template.render(playlist))
+        else:
+            tup = self.request.get('track')
+            song_name = tup[0]
+            artist_name = tup[1]
 
 class PopularPage(webapp2.RequestHandler):
     def get(self):

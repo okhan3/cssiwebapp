@@ -26,12 +26,30 @@
             <button type="submit">
               <span id="search">Search</span>
             </button>
+            <input type = "hidden" name = "form_name" value = "user">
           </form>
-          <h3>Playlists:</h3>
-          {% for name in names %}
-            <h3>{{name}}<h3>
 
-          {% endfor %}
+          <!-- <select>
+            {% for name in names %}
+              <option value={{name}}>{{name}}</option>
+            {% endfor %}
+          </select> -->
+          {% if length %}
+            <h3>Playlists:</h3>
+            {% for i in range(length) %}
+              <h3>{{names[i]}}<h3>
+              <form method = "post">
+                {% for trackname in tracknames[i]%}
+                  <h5>{{trackname[0]}}</h5>
+                  <input type="radio" name="track" value="{{trackname}}"/>
+                  <h6>{{trackname[1]}} </h6>
+                  <br>
+                {% endfor %}
+            {% endfor %}
+            <input type = "hidden" name = "form_name" value = "lyrics">
+            <input type="submit" value="Find lyrics"/>
+          </form>
+          {% endif %}
         </div>
         <!-- <div class="centered">
           <img src="/images/spotifyimg.png">
