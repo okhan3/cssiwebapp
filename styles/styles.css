@@ -108,6 +108,22 @@ h6 {
   margin-bottom: 20px;
 }
 
+.inner-popular {
+  padding: 30px;
+  background-color: #6F4A38;
+}
+.inner-popular h1 {
+  font-size: 25px;
+  text-align: center;
+  color: #EDCF8F;
+
+}
+.inner-popular h2 {
+  padding-top: 15px;
+  font-size: 25px;
+  color: #F0ECE1;
+  text-align: center;
+}
 /* style selection methods */
 #selection {
   margin: 0 auto;
