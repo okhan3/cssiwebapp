@@ -17,6 +17,7 @@ import requests_toolbelt.adapters.appengine
 from spotipy.oauth2 import SpotifyClientCredentials
 from google.appengine.api import urlfetch
 from models import Song
+from collections import Counter
 
 #Just fixes whatever the issue was... leave it in -_-
 requests_toolbelt.adapters.appengine.monkeypatch()
@@ -50,17 +51,21 @@ def fetchAPISeedsResponse(artist, song):
     api_url += "?apikey=" + APISEEDS_KEY
     return urlfetch.fetch(api_url)
 
-def findSong(artist, song, songArr):
+def findSong(artist, track, songArr, getKey):
+    song = {}
     if(len(songArr) == 0):
         return None
     for songObj in songArr:
-        if artist.lower() == str(songObj.artist).lower() and song.lower() == str(songObj.track).lower():
-            return {
-                "artist" : songObj.artist,
-                "track" : songObj.track,
-                "lyrics" : songObj.lyrics,
-                "status" : 200
-                }
+        if artist.lower() == str(songObj.artist).lower() and track.lower() == str(songObj.track).lower():
+            song['artist'] = songObj.artist
+            song['track'] = songObj.track
+            song['lyrics'] = songObj.lyrics
+            song['views'] = songObj.views
+            song['status'] = 200
+            if(not getKey):
+                return song
+            else:
+                return Song.query(Song.artist == song['artist'] and Song.track == song['track'])
     return None
 
 class HomePage(webapp2.RequestHandler):
@@ -80,8 +85,13 @@ class InputPage(webapp2.RequestHandler):
         songArr = Song.query().fetch()
         song = {}
         # Check if the song is in the datastore and initialize it if found
-        songDict = findSong(artist_name, song_name, songArr)
+        songDict = findSong(artist_name, song_name, songArr, False)
         if(songDict is not None):
+            songKey = findSong(artist_name, song_name, songArr, True)
+            songEntity = songKey.get()
+            songEntity.views += 1
+            songEntity.lyrics = songDict['lyrics']
+            songEntity.put()
             song = songDict
         else:
             # Fetch the API response and its status
@@ -95,12 +105,19 @@ class InputPage(webapp2.RequestHandler):
                 song['artist'] = result["artist"]["name"]
                 song['track'] = result["track"]["name"]
                 song['lyrics'] = splitLines(result['track']['text'])
+                # song.update("frequency"+1)
                 # Add the Song object to the data store if the user didn't just misspell the name of artist/song
-                if(findSong(song['artist'], song['track'], songArr) == None):
+                if(findSong(song['artist'], song['track'], songArr, False) == None):
                     songModel = Song(artist=song['artist'], track=song['track'], lyrics=song['lyrics'])
                     songModel.put()
+                else:
+                    songKey = Song.query().filter(Song.artist == song['artist'] and Song.track == song['track'])
+                    songEntity = songKey.get()
+                    songEntity.views += 1
+                    songEntity.lyrics = song['lyrics']
+                    songEntity.put()
             else:
-                song['error'] = "We could not find that song, try again"
+                song['error'] = "We could not find that song, try again."
         # If the song isn't found AND the API fetch is unsuccessful, nothing is printed
         input_template = jinja_env.get_template('/templates/inputlyrics.html')
         self.response.write(input_template.render(song))
@@ -128,8 +145,12 @@ class SpotifyPage(webapp2.RequestHandler):
 
 class PopularPage(webapp2.RequestHandler):
     def get(self):
+        order = Song.query().order(-Song.views).fetch(5)
+        popularList={
+            "list" : order
+            }
         popular_template = jinja_env.get_template('/templates/popularsearch.html')
-        self.response.write(popular_template.render())
+        self.response.write(popular_template.render(popularList))
 
 #List routes
 app = webapp2.WSGIApplication([

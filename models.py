@@ -4,3 +4,4 @@ class Song(ndb.Model):
     artist = ndb.StringProperty(required=True)
     track = ndb.StringProperty(required=True)
     lyrics = ndb.StringProperty(repeated=True)
+    views = ndb.IntegerProperty(default=1)
