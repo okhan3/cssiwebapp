@@ -18,12 +18,26 @@
       <div class="inner-container">
         <h1>Search using Spotify</h1>
       </div>
-            <div class="split spotify">
-        <div class="centered">
+      <div class="split spotify">
+        <div>
+          <form method="post" id="inputform">
+            <span>Spotify Username:</span>
+            <input type="text" name="spotify_username" required>
+            <button type="submit">
+              <span id="search">Search</span>
+            </button>
+          </form>
+          <h3>Playlists:</h3>
+          {% for name in names %}
+            <h3>{{name}}<h3>
+              
+          {% endfor %}
+        </div>
+        <!-- <div class="centered">
           <img src="/images/spotifyimg.png">
           <h2>Spotify</h2>
           <p>Web player here</p>
-        </div>
+        </div> -->
       </div>
 
       <div class="split lyrics">

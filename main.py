@@ -106,6 +106,22 @@ class SpotifyPage(webapp2.RequestHandler):
     def get(self):
         spotify_template = jinja_env.get_template('/templates/spotifylyrics.html')
         self.response.write(spotify_template.render())
+    def post(self):
+        spotify_username = str(self.request.get("spotify_username")).strip()
+        playlists = spotify.user_playlists(spotify_username)
+        playlist_list = playlists['items']
+        uri = []
+        name = []
+        for playlist in playlist_list:
+            uri.append(playlist['uri'])
+            name.append(playlist['name'])
+
+        playlist = {
+            'names' = name,
+            'uris' = uri
+        }
+        spotify_template = jinja_env.get_template('/templates/spotifylyrics.html')
+        self.response.write(spotify_template.render(playlist))
 
 class PopularPage(webapp2.RequestHandler):
     def get(self):
