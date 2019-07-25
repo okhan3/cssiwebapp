@@ -29,6 +29,9 @@ jinja_env = jinja2.Environment(
 
 APISEEDS_KEY = "VHl5WJoexxSgghXe4zUdqAjrfSfOdbZjCGb6BkrODi5qquF3MFPGzNrFQr1Zsj4W"
 
+client_credentials_manager = SpotifyClientCredentials(client_id='a3af3476e5f24441ba77767bdd13f518', client_secret='08aee8a23fd148f3a790fe4116edecb1')
+spotify = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+
 #Splits the lyrics provided by apiseeds by line into an array
 def splitLines(text):
     lines = []
@@ -117,8 +120,8 @@ class SpotifyPage(webapp2.RequestHandler):
             name.append(playlist['name'])
 
         playlist = {
-            'names' = name,
-            'uris' = uri
+            'names': name,
+            'uris': uri
         }
         spotify_template = jinja_env.get_template('/templates/spotifylyrics.html')
         self.response.write(spotify_template.render(playlist))
