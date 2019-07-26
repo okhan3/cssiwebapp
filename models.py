@@ -8,5 +8,5 @@ class Song(ndb.Model):
 
 class User(ndb.Model):
     username = ndb.StringProperty(required=True)
-    playlists = ndb.StringProperty(required=True)
-    tracks = ndb.StringProperty(required=True)
+    playlists = ndb.JsonProperty(required=True)
+    tracks = ndb.JsonProperty(required=True)

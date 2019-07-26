@@ -74,10 +74,10 @@ def findUser(user, userArr):
     if(len(user) == 0):
         return None
     for users in userArr:
-        if artist.lower() == str(songObj.username).lower():
+        if user.lower() == str(users.username).lower():
             return {
-                "tracks" : userObj.tracks,
-                "playlists" : userObj.tracks
+                "tracks" : users.tracks,
+                "playlists" : users.playlists,
                 }
     return None
 
@@ -147,18 +147,20 @@ class SpotifyPage(webapp2.RequestHandler):
                 spotify_username = username
             else:
                 username = spotify_username
-            songArr = Song.query().fetch()
-            info = findUser(spotify_username, songArr)
-            if len(info['tracks']) == 0:
+            userArr = User.query().fetch()
+            info = findUser(spotify_username, userArr)
+            if info == None:
                 playlists = spotify.user_playlists(spotify_username)
                 playlist_list = playlists['items']
                 uri = []
                 name = []
                 tracks = []
                 tracknames = []
+                playlistsss = []
                 for playlist in playlist_list:
                     uri.append(playlist['uri'])
                     name.append(playlist['name'])
+                    playlistsss.append(playlist)
                 for id in uri:
                     tracks.append(spotify.user_playlist_tracks('joeychin01', id)['items'])
                 for tracklist in tracks:
@@ -172,17 +174,24 @@ class SpotifyPage(webapp2.RequestHandler):
                     'tracknames': tracknames,
                     'length': int(len(name))
                 }
+                user1 = User(username=spotify_username, tracks=tracknames, playlists=playlistsss)
+                user1.put()
                 spotify_template = jinja_env.get_template('/templates/spotifylyrics.html')
                 self.response.write(spotify_template.render(playlist))
             else:
                 uri = []
+                name = []
                 for playlist in info['playlists']:
                     uri.append(playlist['uri'])
+                    name.append(playlist['name'])
                 playlist = {
-                    'names' = info['playlists'],
-                    'uris' = uri,
-                    'tracknames' =
+                    'names': name,
+                    'uris': uri,
+                    'tracknames': info['tracks'],
+                    'length': int(len(info['playlists']))
                 }
+                spotify_template = jinja_env.get_template('/templates/spotifylyrics.html')
+                self.response.write(spotify_template.render(playlist))
         else:
             tup = self.request.get('track')
             song_name = tup[0]
