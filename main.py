@@ -35,6 +35,72 @@ spotify = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
 username = ""
 
+
+
+def findLyrics(song_name, artist_name):
+    songArr = Song.query().fetch()
+    song = {}
+    # Check if the song is in the datastore and initialize it if found
+    songDict = findSong(artist_name, song_name, songArr, False)
+    if(songDict is not None):
+        songKey = findSong(artist_name, song_name, songArr, True)
+        songEntity = songKey.get()
+        songEntity.views += 1
+        songEntity.lyrics = songDict['lyrics']
+        song['lyrics'] = songDict['lyrics']
+        songEntity.put()
+        song = songDict
+        song['lyrics'] = songDict['lyrics']
+    else:
+        # Fetch the API response and its status
+        apiseeds_response = fetchAPISeedsResponse(artist_name, song_name)
+        response_status = apiseeds_response.status_code
+        song['status'] = response_status
+        # If it's successful (code 200), then decode the JSON and get the artist, track, and lyrics from it
+        if int(response_status) == 200:
+            apiseeds_responseJson = json.loads(apiseeds_response.content)
+            result = apiseeds_responseJson['result']
+            song['artist'] = result["artist"]["name"]
+            song['track'] = result["track"]["name"]
+            song['lyrics'] = splitLines(result['track']['text'])
+            # song.update("frequency"+1)
+            # Add the Song object to the data store if the user didn't just misspell the name of artist/song
+            if(findSong(song['artist'], song['track'], songArr, False) == None):
+                songModel = Song(artist=song['artist'], track=song['track'], lyrics=song['lyrics'])
+                songModel.put()
+            else:
+                songKey = Song.query().filter(Song.artist == song['artist'] and Song.track == song['track'])
+                songEntity = songKey.get()
+                songEntity.views += 1
+                songEntity.lyrics = song['lyrics']
+                songEntity.put()
+            song['error'] = ""
+        else:
+            song['error'] = "We could not find that song, try again."
+            song['lyrics'] = ""
+    return song
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #Splits the lyrics provided by apiseeds by line into an array
 def splitLines(text):
     lines = []
@@ -131,6 +197,8 @@ class InputPage(webapp2.RequestHandler):
                     songEntity.put()
             else:
                 song['error'] = "We could not find that song, try again."
+                song['track'] = ''
+                song['lyrics'] = ''
         # If the song isn't found AND the API fetch is unsuccessful, nothing is printed
         input_template = jinja_env.get_template('/templates/inputlyrics.html')
         self.response.write(input_template.render(song))
@@ -141,13 +209,8 @@ class SpotifyPage(webapp2.RequestHandler):
         self.response.write(spotify_template.render())
     def post(self):
         if self.request.get('form_name') == 'user':
-            global username
-            spotify_username = str(self.request.get("spotify_username")).strip()
-            if spotify_username == "":
-                spotify_username = username
-            else:
-                username = spotify_username
             userArr = User.query().fetch()
+            spotify_username = self.request.get('spotify_username')
             info = findUser(spotify_username, userArr)
             if info == None:
                 playlists = spotify.user_playlists(spotify_username)
@@ -188,14 +251,46 @@ class SpotifyPage(webapp2.RequestHandler):
                     'names': name,
                     'uris': uri,
                     'tracknames': info['tracks'],
-                    'length': int(len(info['playlists']))
+                    'length': int(len(info['playlists'])),
+                    'lyrics': '',
+                    'error': '',
+                    'username': spotify_username
                 }
                 spotify_template = jinja_env.get_template('/templates/spotifylyrics.html')
                 self.response.write(spotify_template.render(playlist))
         else:
             tup = self.request.get('track')
-            song_name = tup[0]
-            artist_name = tup[1]
+            split_index = tup.index(" / ")
+            song_name = tup[:split_index]
+            artist_name = tup[split_index+3:]
+            split_other_index = tup.index("=")
+            username = tup[split_other_index+1:]
+            userArr = User.query().fetch()
+            info = findUser(username, userArr)
+            print(info)
+            song = findLyrics(song_name, artist_name)
+            uri = []
+            name = []
+            for playlist in info['playlists']:
+                uri.append(playlist['uri'])
+                name.append(playlist['name'])
+            playlist = {
+                'names': name,
+                'uris': uri,
+                'tracknames': info['tracks'],
+                'length': int(len(info['playlists'])),
+                'lyrics': song['lyrics'],
+                'track': song['track'],
+                'artist': song['artist'],
+                'error': song['error'],
+                'username': username
+            }
+            playlist['lyrics'] = song['lyrics']
+            playlist['error'] = song['error']
+            spotify_template = jinja_env.get_template('/templates/spotifylyrics.html')
+            self.response.write(spotify_template.render(playlist))
+
+
 
 class PopularPage(webapp2.RequestHandler):
     def get(self):

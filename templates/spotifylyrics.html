@@ -29,26 +29,20 @@
             </button>
             <input type = "hidden" name = "form_name" value = "user">
           </form>
-
-          <!-- <select>
-            {% for name in names %}
-              <option value={{name}}>{{name}}</option>
-            {% endfor %}
-          </select> -->
           {% if length %}
             <h3>Playlists:</h3>
             {% for i in range(length) %}
-              <h3>{{names[i]}}<h3>
+              <h3 >{{names[i]}}<h3>
               <form method = "post">
                 {% for trackname in tracknames[i]%}
                   <h5>{{trackname[0]}}</h5>
-                  <input type="radio" name="track" value="{{trackname}}"/>
+                  <input type="radio" name="track" value="{{trackname[0]}} / {{trackname[1]}}={{username}}">
                   <h6>{{trackname[1]}} </h6>
                   <br>
                 {% endfor %}
             {% endfor %}
             <input type = "hidden" name = "form_name" value = "lyrics">
-            <input type="submit" value="Find lyrics"/>
+            <input type="submit"  value="Find lyrics"/>
           </form>
           {% endif %}
         </div>
@@ -60,10 +54,35 @@
       </div>
 
       <div class="split lyrics">
-        <div class="centered">
-          <img src="/images/giraffe.png">
-          <h2>Lyrics</h2>
-          <p>Lyrics here</p>
+        <div>
+          {% if lyric == None %}
+            <img src="/images/giraffe.png">
+            <h2>Lyrics</h2>
+            <p>Lyrics here</p>
+          {% else %}
+          <div id="inputLyricsBox">
+            <div class="songdetails">
+              <!-- <h1>{{track}}</h1>
+              <h1>{{artist}}</h1> -->
+              {% if track|string() != "" %}
+                <h1> "{{track}}" </h1>
+              {% else %}
+                <h1> {{error}} </h1>
+              {% endif %}
+              <h1> {{artist}} </h1>
+            </div>
+
+              {% for line in lyrics %}
+                {% if line == '' %}
+                  <br>
+                {% else %}
+                  <p>
+                    {{line}}
+                  </p>
+                {% endif %}
+              {% endfor %}
+          </div>
+          {% endif %}
         </div>
       </div>
     </div>
