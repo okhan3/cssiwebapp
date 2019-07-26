@@ -30,9 +30,12 @@
             <input type = "hidden" name = "form_name" value = "user">
           </form>
           {% if length %}
+            <h3>To use - first select a song, then hit enter, or go to the bottom of the scroll</h3>
+            <br>
             <h3>Playlists:</h3>
+            <br>
             {% for i in range(length) %}
-              <h3 >{{names[i]}}<h3>
+              <h3 class="playlist">{{names[i]}}<h3>
               <form method = "post">
                 {% for trackname in tracknames[i]%}
                   <h5>{{trackname[0]}}</h5>
@@ -42,8 +45,8 @@
                 {% endfor %}
             {% endfor %}
             <input type = "hidden" name = "form_name" value = "lyrics">
-            <input type="submit"  value="Find lyrics"/>
-          </form>
+            <!-- <input id="submit_button" type="submit"  value="Find lyrics"/>
+          </form> -->
           {% endif %}
         </div>
         <!-- <div class="centered">

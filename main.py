@@ -77,30 +77,10 @@ def findLyrics(song_name, artist_name):
             song['error'] = ""
         else:
             song['error'] = "We could not find that song, try again."
-            song['lyrics'] = ""
+            song['lyrics'] = ''
+            song['track'] = ''
+            song['artist'] = ''
     return song
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #Splits the lyrics provided by apiseeds by line into an array
 def splitLines(text):
     lines = []
@@ -213,34 +193,41 @@ class SpotifyPage(webapp2.RequestHandler):
             spotify_username = self.request.get('spotify_username')
             info = findUser(spotify_username, userArr)
             if info == None:
-                playlists = spotify.user_playlists(spotify_username)
-                playlist_list = playlists['items']
-                uri = []
-                name = []
-                tracks = []
-                tracknames = []
-                playlistsss = []
-                for playlist in playlist_list:
-                    uri.append(playlist['uri'])
-                    name.append(playlist['name'])
-                    playlistsss.append(playlist)
-                for id in uri:
-                    tracks.append(spotify.user_playlist_tracks('joeychin01', id)['items'])
-                for tracklist in tracks:
-                    trackoftrack = []
-                    for track in tracklist:
-                        trackoftrack.append((track['track']['name'], track['track']['artists'][0]['name']))
-                    tracknames.append(trackoftrack)
-                playlist = {
-                    'names': name,
-                    'uris': uri,
-                    'tracknames': tracknames,
-                    'length': int(len(name))
-                }
-                user1 = User(username=spotify_username, tracks=tracknames, playlists=playlistsss)
-                user1.put()
-                spotify_template = jinja_env.get_template('/templates/spotifylyrics.html')
-                self.response.write(spotify_template.render(playlist))
+                try:
+                    playlists = spotify.user_playlists(spotify_username)
+                    playlist_list = playlists['items']
+                    uri = []
+                    name = []
+                    tracks = []
+                    tracknames = []
+                    playlistsss = []
+                    for playlist in playlist_list:
+                        uri.append(playlist['uri'])
+                        name.append(playlist['name'])
+                        playlistsss.append(playlist)
+                    for id in uri:
+                        tracks.append(spotify.user_playlist_tracks('joeychin01', id)['items'])
+                    for tracklist in tracks:
+                        trackoftrack = []
+                        for track in tracklist:
+                            trackoftrack.append((track['track']['name'], track['track']['artists'][0]['name']))
+                        tracknames.append(trackoftrack)
+                    playlist = {
+                        'names': name,
+                        'uris': uri,
+                        'tracknames': tracknames,
+                        'length': int(len(name))
+                    }
+                    user1 = User(username=spotify_username, tracks=tracknames, playlists=playlistsss)
+                    user1.put()
+                    spotify_template = jinja_env.get_template('/templates/spotifylyrics.html')
+                    self.response.write(spotify_template.render(playlist))
+                except:
+                    spotify_template = jinja_env.get_template('/templates/spotifylyrics.html')
+                    playlist = {
+                        'error': "Username not found",
+                    }
+                    self.response.write(spotify_template.render(playlist))
             else:
                 uri = []
                 name = []

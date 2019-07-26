@@ -61,6 +61,10 @@ h5 {
 h6 {
   margin: 0px;
 }
+.playlist {
+  color: #1DB954;
+}
+
 
 .outer-container {
   position: relative;
@@ -243,6 +247,7 @@ h6 {
   background-color: #EDCF8F;
   text-shadow: 2px 2px #F0ECE1;
 }
+
 
 /* If you want the content centered horizontally and vertically */
 .centered {
