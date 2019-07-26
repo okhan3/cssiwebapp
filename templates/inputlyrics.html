@@ -26,28 +26,28 @@
           <input type="text" name="song_name" required>
           <button type="submit">
             <span id="search">Search</span>
-            </button>
+          </button>
         </form>
 
         <div id="inputLyricsBox">
           <div class="songdetails">
             {% if track|string() != "" %}
               <h1> "{{track}}" </h1>
-              {% else %}
-            <h1> {{error}} </h1>
-            {% endif %}
-        <h1> {{artist}} </h1>
-
-          </div>
-          {% for line in lyrics %}
-            {% if line == '' %}
-              <br>
             {% else %}
-              <p>
-                {{line}}
-              </p>
+              <h1> {{error}} </h1>
             {% endif %}
-          {% endfor %}
+            <h1> {{artist}} </h1>
+          </div>
+
+            {% for line in lyrics %}
+              {% if line == '' %}
+                <br>
+              {% else %}
+                <p>
+                  {{line}}
+                </p>
+              {% endif %}
+            {% endfor %}
         </div>
 
       </div>
