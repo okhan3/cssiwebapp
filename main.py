@@ -189,6 +189,8 @@ class InputPage(webapp2.RequestHandler):
                     songEntity.put()
             else:
                 song['error'] = "We could not find that song, try again."
+                song['track'] = ''
+                song['lyrics'] = ''
         # If the song isn't found AND the API fetch is unsuccessful, nothing is printed
         input_template = jinja_env.get_template('/templates/inputlyrics.html')
         self.response.write(input_template.render(song))
