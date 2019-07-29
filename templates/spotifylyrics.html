@@ -19,6 +19,7 @@
       <div class="inner-container">
         <h1>Search using Spotify</h1>
       </div>
+
       <div class="split spotify">
         <div>
           <form method="post" id="inputform">
@@ -27,46 +28,60 @@
             <button type="submit">
               <span id="search">Search</span>
             </button>
-            <input type = "hidden" name = "form_name" value = "user">
           </form>
 
-          <!-- <select>
-            {% for name in names %}
-              <option value={{name}}>{{name}}</option>
-            {% endfor %}
-          </select> -->
-          {% if length %}
-            <h3>Playlists:</h3>
-            {% for i in range(length) %}
-              <h3>{{names[i]}}<h3>
-              <form method = "post">
-                {% for trackname in tracknames[i]%}
-                  <h5>{{trackname[0]}}</h5>
-                  <input type="radio" name="track" value="{{trackname}}"/>
-                  <h6>{{trackname[1]}} </h6>
-                  <br>
+          {% if status == 200 %}
+            {% set i = 0 %}
+            {% set j = 0 %}
+            <form method="post">
+              {% for playlistName in playlist_names %}
+                <h3 class="playlist-name">{{playlistName}}<h3>
+                {% for info in playlist_tracklists[i] %}
+                  {% if j % 2 == 0 %}
+                    <div class="playlist-track set-light">
+                  {% else %}
+                    <div class="playlist-track set-dark">
+                  {% endif %}
+                      <input name="song-select" type="radio" value="{{info[0]}} /// {{info[1]}} *** {{username}}" required>
+                      {{info[0]}}<br>
+                      <em> &nbsp;&nbsp;&nbsp; {{info[1]}}</em>
+                    </div>
+                  {% set j = j + 1  %}
                 {% endfor %}
-            {% endfor %}
-            <input type = "hidden" name = "form_name" value = "lyrics">
-            <input type="submit" value="Find lyrics"/>
-          </form>
+                {% set i = i + 1 %}
+              {% endfor %}
+              <button id="spotifysubmit" type="submit">Search</button>
+            </form>
+          {% elif status == -1 %}
+            <h3>Unable to retrieve public playlists!</h3>
+          {% elif status == 1 %}
+            <h3>Username is invalid or not found!</h3>
+          {% elif status == 2 %}
+            <h3>No public playlists to use!</h3>
           {% endif %}
         </div>
-        <!-- <div class="centered">
-          <img src="/images/spotifyimg.png">
-          <h2>Spotify</h2>
-          <p>Web player here</p>
-        </div> -->
       </div>
 
-      <div class="split lyrics">
-        <div class="centered">
-          <img src="/images/giraffe.png">
-          <h2>Lyrics</h2>
-          <p>Lyrics here</p>
+        <div class="split lyrics">
+          <div class="style-lyrics">
+            {% if display %}
+              <h3>{{track}}</h3>
+              <h3>{{artist}}</h3>
+              {% for line in lyrics %}
+                {% if line == '' %}
+                  <br>
+                {% else %}
+                  <p>
+                    {{line}}
+                  </p>
+                {% endif %}
+              {% endfor %}
+            </div>
+          {% elif display == False %}
+            <h3>Lyrics not found!</h3>
+          {% endif %}
         </div>
-      </div>
-    </div>
 
+    </div>
   </body>
 </html>
